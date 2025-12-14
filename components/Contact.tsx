@@ -18,22 +18,33 @@ export default function Contact({ t }: ContactProps) {
     message: '',
   });
   const [status, setStatus] = useState<FormStatus>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('sending');
+    setErrorMessage('');
 
     try {
+      // Add timeout to prevent hanging on slow connections
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to send email');
+        throw new Error(data.error || 'Failed to send email');
       }
 
       setStatus('success');
@@ -41,12 +52,24 @@ export default function Contact({ t }: ContactProps) {
       
       // Reset success message after 5 seconds
       setTimeout(() => setStatus('idle'), 5000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Email error:', error);
+      
+      let message = t.contact.error;
+      if (error.name === 'AbortError') {
+        message = 'Request timeout. Please check your connection and try again.';
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      setErrorMessage(message);
       setStatus('error');
       
-      // Reset error message after 5 seconds
-      setTimeout(() => setStatus('idle'), 5000);
+      // Reset error message after 8 seconds
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 8000);
     }
   };
 
@@ -142,11 +165,11 @@ export default function Contact({ t }: ContactProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-4 bg-red-100 dark:bg-red-900/30 border-2 border-red-500 rounded-2xl flex items-center gap-3"
+              className="mt-6 p-4 bg-red-100 dark:bg-red-900/30 border-2 border-red-500 rounded-2xl flex items-start gap-3"
             >
-              <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+              <XCircle className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
               <p className="text-red-800 dark:text-red-200 font-medium">
-                {t.contact.error}
+                {errorMessage || t.contact.error}
               </p>
             </motion.div>
           )}
