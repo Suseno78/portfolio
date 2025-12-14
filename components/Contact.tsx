@@ -4,6 +4,7 @@ import { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Translations } from '@/lib/translations';
 import { Send, CheckCircle, XCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
 interface ContactProps {
   t: Translations;
@@ -25,6 +26,58 @@ export default function Contact({ t }: ContactProps) {
     setStatus('sending');
     setErrorMessage('');
 
+    try {
+      // Check if EmailJS is configured
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        // Fallback to API route if EmailJS not configured
+        await sendViaAPI();
+        return;
+      }
+
+      // Send email using EmailJS
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_name: 'Senz',
+      };
+
+      await emailjs.send(
+        serviceId,
+        templateId,
+        templateParams,
+        publicKey
+      );
+
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error: any) {
+      console.error('Email error:', error);
+      
+      let message = 'Failed to send message. Please try again or contact me directly.';
+      if (error.text) {
+        message = error.text;
+      }
+      
+      setErrorMessage(message);
+      setStatus('error');
+      
+      // Reset error message after 8 seconds
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 8000);
+    }
+  };
+
+  const sendViaAPI = async () => {
     try {
       // Add timeout to prevent hanging on slow connections
       const controller = new AbortController();
@@ -53,7 +106,7 @@ export default function Contact({ t }: ContactProps) {
       // Reset success message after 5 seconds
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error: any) {
-      console.error('Email error:', error);
+      console.error('API error:', error);
       
       let message = t.contact.error;
       if (error.name === 'AbortError') {
