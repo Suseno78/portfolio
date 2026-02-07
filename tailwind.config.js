@@ -9,54 +9,82 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Soft pastel mint palette
-        primary: {
-          50: '#F0FDF9',
-          100: '#CCFBEF',
-          200: '#99F6E0',
-          300: '#5FEACA',
-          400: '#2DD4B0',
-          500: '#14B89A',
-          600: '#0E9384',
-          700: '#107569',
-          800: '#125D56',
-          900: '#134E48',
+        // Cyber color palette
+        cyber: {
+          50: '#ecfeff',
+          100: '#cffafe',
+          200: '#a5f3fc',
+          300: '#67e8f9',
+          400: '#22d3ee',
+          500: '#00f5ff',
+          600: '#0ea5e9',
+          700: '#0284c7',
+          800: '#0369a1',
+          900: '#0c4a6e',
+          950: '#082f49',
         },
-        // Soft purple accent
-        accent: {
-          50: '#FAF5FF',
-          100: '#F3E8FF',
-          200: '#E9D5FF',
-          300: '#D8B4FE',
-          400: '#C084FC',
-          500: '#A855F7',
-          600: '#9333EA',
-          700: '#7E22CE',
-          800: '#6B21A8',
-          900: '#581C87',
+        // Neon purple palette
+        neon: {
+          50: '#fdf4ff',
+          100: '#fae8ff',
+          200: '#f5d0fe',
+          300: '#f0abfc',
+          400: '#e879f9',
+          500: '#d946ef',
+          600: '#a855f7',
+          700: '#9333ea',
+          800: '#7c3aed',
+          900: '#6b21a8',
+          950: '#4a044e',
         },
-        // Soft peach
-        peach: {
-          50: '#FFF7ED',
-          100: '#FFEDD5',
-          200: '#FED7AA',
-          300: '#FDBA74',
-          400: '#FB923C',
-          500: '#F97316',
-          600: '#EA580C',
-          700: '#C2410C',
-          800: '#9A3412',
-          900: '#7C2D12',
-        }
+        // Electric accents
+        electric: {
+          50: '#fff1f2',
+          100: '#ffe4e6',
+          200: '#fecdd3',
+          300: '#fda4af',
+          400: '#fb7185',
+          500: '#f43f5e',
+          600: '#e11d48',
+          700: '#be123c',
+          800: '#9f1239',
+          900: '#881337',
+        },
+        // Dark backgrounds
+        dark: {
+          50: '#1e293b',
+          100: '#1a2234',
+          200: '#151c2c',
+          300: '#111827',
+          400: '#0f172a',
+          500: '#0d1424',
+          600: '#0a101c',
+          700: '#080d16',
+          800: '#060a12',
+          900: '#0a0a1a',
+          950: '#050508',
+        },
       },
       borderRadius: {
         '2xl': '1rem',
         '3xl': '1.5rem',
       },
+      boxShadow: {
+        'cyber': '0 0 20px rgba(0, 245, 255, 0.3)',
+        'cyber-lg': '0 0 40px rgba(0, 245, 255, 0.4)',
+        'cyber-xl': '0 0 60px rgba(0, 245, 255, 0.5)',
+        'neon': '0 0 20px rgba(168, 85, 247, 0.3)',
+        'neon-lg': '0 0 40px rgba(168, 85, 247, 0.4)',
+        'electric': '0 0 20px rgba(244, 63, 94, 0.3)',
+        'glow': '0 0 30px rgba(0, 245, 255, 0.2), 0 0 60px rgba(168, 85, 247, 0.1)',
+      },
       animation: {
         'float': 'float 6s ease-in-out infinite',
         'slide-up': 'slideUp 0.5s ease-out',
         'fade-in': 'fadeIn 0.6s ease-out',
+        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+        'border-glow': 'borderGlow 3s ease-in-out infinite',
+        'cyber-flicker': 'cyberFlicker 4s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -71,6 +99,28 @@ module.exports = {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 0 20px rgba(0, 245, 255, 0.3)' },
+          '50%': { boxShadow: '0 0 40px rgba(0, 245, 255, 0.6)' },
+        },
+        borderGlow: {
+          '0%, 100%': { borderColor: 'rgba(0, 245, 255, 0.5)' },
+          '50%': { borderColor: 'rgba(168, 85, 247, 0.5)' },
+        },
+        cyberFlicker: {
+          '0%, 100%': { opacity: '1' },
+          '92%': { opacity: '1' },
+          '93%': { opacity: '0.8' },
+          '94%': { opacity: '1' },
+          '96%': { opacity: '0.9' },
+          '97%': { opacity: '1' },
+        },
+      },
+      backgroundImage: {
+        'cyber-gradient': 'linear-gradient(135deg, #0a0a1a 0%, #0f172a 50%, #0a0a1a 100%)',
+        'neon-gradient': 'linear-gradient(135deg, #00f5ff 0%, #a855f7 100%)',
+        'neon-text': 'linear-gradient(90deg, #00f5ff 0%, #a855f7 50%, #f43f5e 100%)',
+        'cyber-radial': 'radial-gradient(ellipse at center, rgba(0, 245, 255, 0.1) 0%, transparent 70%)',
       },
     },
   },
